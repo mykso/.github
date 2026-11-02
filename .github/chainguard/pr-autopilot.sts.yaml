@@ -1,0 +1,23 @@
+# Organisation-level policy for pr-autopilot, served by the self-hosted octo-sts at sts.zebradil.dev.
+# Request with scope "mykso" (not "mykso/<repo>"): caller_repository_only narrows each token to the calling
+# repository and is rejected for repository scopes.
+issuer: https://token.actions.githubusercontent.com
+# Both subject forms: GitHub issues the ID-bearing one only to repositories opted into immutable subjects.
+# repository_owner_id below still pins the owner, so the name-only form does not admit another account.
+subject_pattern: 'repo:mykso(@135246841)?/[^/@]+(@[0-9]+)?:.*'
+claim_pattern:
+  repository_owner_id: '135246841'
+  # Only the two pr-autopilot workflows on main; widen for repositories whose default branch differs.
+  workflow_ref: "mykso/[^/]+/\\.github/workflows/pr-autopilot-(sweep|reactive)\\.yml@refs/heads/main"
+# Matches app_name in the octo-sts config; without it octo-sts balances across every App in the pool.
+app: zebradil-pr-autopilot
+caller_repository_only: true
+# Mirrors pr-autopilot docs/manual.md, "Permissions".
+permissions:
+  contents: write
+  pull_requests: write
+  actions: read
+  checks: read
+  statuses: read
+  issues: write
+  workflows: write
